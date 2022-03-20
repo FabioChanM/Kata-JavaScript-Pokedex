@@ -1,0 +1,83 @@
+const pokeCard = document.querySelector('[data-poke-card]');
+const pokeName = document.querySelector('[data-poke-name]');
+const pokeImg = document.querySelector('[data-poke-img]');
+const pokeImgContainer = document.querySelector('[data-poke-img-container]');
+const pokeId = document.querySelector('[data-poke-id]');
+const pokeTypes = document.querySelector('[data-poke-types]');
+const pokeStats = document.querySelector('[data-poke-stats]');
+
+const typeColors = {
+    Electrico: '#FFEA70',
+    Normal: '#B09398',
+    Fuego: '#FF675C',
+    Agua: '#0596C7',
+    Hielo: '#AFEAFD',
+    Piedra: '#999799',
+    Volador: '#7AE7C7',
+    Hierba: '#4A9681',
+    Psiquico: '#FFC6D9',
+    ghost: '#561D25',
+    Insecto: '#A2FAA3',
+    Venenoso: '#795663',
+    Tierra: '#D2B074',
+    Dragon: '#DA627D',
+    Hierro: '#1D8A99',
+    Peleador: '#2F2F2F',
+  Defecto: '#2A1A1F',
+};
+
+
+const searchPokemon = event => {
+    event.preventDefault();
+    const { value } = event.target.pokemon;
+    fetch(`https://pokeapi.co/api/v2/pokemon/${value.toLowerCase()}`)
+    //promise para la obtencion del documento
+        .then(data => data.json())
+        .then(response => renderPokemonData(response))
+        .catch(err => renderNotFound())
+}
+
+const renderPokemonData = data => {
+    const sprite =  data.sprites.front_default;
+    const { stats, types } = data;
+    pokeName.textContent = data.name;
+    pokeImg.setAttribute('src', sprite);
+    pokeId.textContent = `Numero de pokemon: ${data.id}`;
+    renderPokemonTypes(types);
+    renderPokemonStats(stats);
+}
+
+
+
+const renderPokemonTypes = types => {
+    pokeTypes.innerHTML = '';
+    types.forEach(type => {
+        const typeTextElement = document.createElement("div");
+        typeTextElement.style.color = typeColors[type.type.name];
+        typeTextElement.textContent = type.type.name;
+        pokeTypes.appendChild(typeTextElement);
+    });
+}
+
+const renderPokemonStats = stats => {
+    pokeStats.innerHTML = '';
+    stats.forEach(stat => {
+
+        const statElement = document.createElement("div");
+
+        const statElementName = document.createElement("div");
+
+        const statElementAmount = document.createElement("div");
+
+        statElementName.textContent = stat.stat.name;
+
+        statElementAmount.textContent = stat.base_stat;
+
+        statElement.appendChild(statElementName);
+
+        statElement.appendChild(statElementAmount);
+
+        pokeStats.appendChild(statElement);
+    });
+}
+
